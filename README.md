@@ -8,4 +8,4 @@ This is a basic landing page that uses Javascript to create a NavBar dynamically
 
 ### To view project
 
-The project is published on GitHub Pages. To view, click on this link: [link to project]()
+The project is published on GitHub Pages. To view, click on this link: [link to project](https://rajharsh81070.github.io/Landing-Page/)
