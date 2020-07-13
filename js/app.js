@@ -1,93 +1,75 @@
 // build the nav
-const navBar = document.getElementById('navbar__list');
-const containerLength = document.getElementsByClassName('landing__container').length;
+const navList = document.getElementById('navbar__list');
+const navElements = document.querySelectorAll('section')
 
-for (let i = 1; i <= containerLength; i++) {
-  const newListItem = document.createElement('li');
-  newListItem.textContent = `Section ${i}`;
-  const navId = `sample-nav-${i}`;
-  newListItem.setAttribute('id', navId);
-  newListItem.setAttribute('class', 'nav-list-item');
-  navBar.appendChild(newListItem);
-  const item = `section${i}`;
-  const itemTarget = document.getElementById(item);
-  const listTarget = document.getElementById(navId);
-  const buttonName = `section${i}-button`;
-  const buttonToAdd = document.getElementById(buttonName);
+// Build menu by iterating through the navelements
+navElements.forEach(el => {
+  const navlistElement = `<li class='menu__link ${el.className}' data-link=${el.id}><a href="#${el.id}">${el.dataset.nav}</li>`
+  navList.insertAdjacentHTML('beforeend', navlistElement)
+})
 
-  //Adds button when scrolls into view
+// Scroll to section on link click by listenting to the click-event in the navlist
+navList.addEventListener('click', e => {
+  e.preventDefault()
+  const parent = e.target.hasAttribute('data-link')
+    ? e.target
+    : e.target.parentElement
+  const elementToScrollTo = document.getElementById(parent.dataset.link)
+  elementToScrollTo.scrollIntoView({ block: 'end', behavior: 'smooth' })
+})
 
-  listTarget.addEventListener('click', function () {
-    itemTarget.scrollIntoView({
-      behavior: 'smooth'
-    })
-    buttonToAdd.innerHTML = "<button class='section-button' onclick='goToTop()'>Return to Top</button>";
-  });
+// Set section and nav link as active using the IntersectionObserver pattern
+const callback = entries => {
+  entries.forEach(entry => {
+    const navListElement = document.querySelector(
+      `.menu__link[data-link='${entry.target.id}']`,
+    )
+    const section = document.getElementById(entry.target.id)
+
+    if (entry && entry.isIntersecting) {
+      navListElement.classList.add('active')
+      section.classList.add('active')
+    } else {
+      if (navListElement.classList.contains('active')) {
+        navListElement.classList.remove('active')
+      }
+
+      if (section.classList.contains('active')) {
+        section.classList.remove('active')
+      }
+    }
+  })
 }
 
-//This is the helper function for a scroll
-const scrollToTop = () => {
-  const scrolling = document.documentElement.scrollTop || document.body.scrollTop;
-  if (scrolling > 0) {
-    window.requestAnimationFrame(scrollToTop);
-    window.scrollTo(0, scrolling - scrolling / 50);
-  }
-};
+//Get the button
+const mybutton = document.getElementById("myBtn");
 
-// On button click, goes to top of page 
-function goToTop() {
-  scrollToTop();
+// When the user scrolls down 50px from the top of the document, show the button
+window.onscroll = function () { scrollFunction() };
 
-  for (i = 1; i < containerLength + 1; i++) {
-    let buttonToDelete = document.getElementById("section" + i + "-button");
-    buttonToDelete.innerHTML = "";
-  }
-}
-
-//Checks if section is in view and adds active-class with moving background and color change
-function checkIfSectionInView() {
-  let isInViewport = function (elem) {
-    let bounding = elem.getBoundingClientRect();
-    return (
-      bounding.top <= 50 &&
-      bounding.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
-      bounding.right <=
-      (window.innerWidth || document.documentElement.clientWidth)
-    );
-  };
-
-  for (i = 1; i <= containerLength; i++) {
-    let sectionInFullView = document.getElementById("section" + i);
-
-    window.addEventListener(
-      "scroll",
-      function (event) {
-        if (isInViewport(sectionInFullView)) {
-          sectionInFullView.classList.add("your-active-class");
-        } else {
-          sectionInFullView.classList.remove("your-active-class");
-        }
-      },
-      false
-    );
-  }
-}
-
-// When the user scrolls the page, execute myFunction
-window.onscroll = function () { myFunction() };
-
-// Get the navbar
-var navbar = document.getElementById("header");
-// Get the offset position of the navbar
-var sticky = header.offsetTop;
-
-// Add the sticky class to the navbar when you reach its scroll position. Remove "sticky" when you leave the scroll position
-function myFunction() {
-  if (window.pageYOffset >= sticky) {
-    navbar.classList.add("sticky")
+const scrollFunction = () => {
+  if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+    mybutton.style.display = "block";
   } else {
-    navbar.classList.remove("sticky");
+    mybutton.style.display = "none";
   }
 }
-checkIfSectionInView();
+
+// When the user clicks on the button, scroll to the top of the document
+function topFunction() {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+}
+
+// Options for the observer. Most important is the threshold
+const options = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.6,
+}
+
+// Setting an observer with options and a callback which checks if the navelement should be active
+const observer = new IntersectionObserver(callback, options)
+navElements.forEach(el => {
+  observer.observe(document.getElementById(el.id))
+})
