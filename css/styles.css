@@ -76,7 +76,6 @@ section {
   display: inline-block;
 }
 
-.navbar__menu li,
 .navbar__menu .menu__link {
   display: block;
   padding: 1em;
@@ -87,25 +86,15 @@ section {
   transition: ease 0.3s all;
 }
 
-.navbar__menu li:hover,
 .navbar__menu .menu__link:hover {
   background: #333;
   text-decoration: none;
 }
 
-.navbar__menu li:hover a,
-.navbar__menu .menu__link:hover a {
+.navbar__menu .active__link {
+  background: #333;
   color: #fff;
-}
-
-.navbar__menu .menu__link.active {
-  background-color: #333;
-}
-
-.navbar__menu .menu__link.active a,
-.navbar__menu .menu__link.active a:link {
-  color: rgb(136, 203, 171);
-  text-decoration: none;
+  transition: ease 0.3s all;
 }
 
 /* Header Styles */
